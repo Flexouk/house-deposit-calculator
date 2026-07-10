@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Move-In Date — House Deposit Countdown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF6EE;
+    --paper-raised:#F4ECDD;
+    --ink:#2B2520;
+    --ink-soft:#5C5248;
+    --brick:#C1572D;
+    --brick-deep:#9C4423;
+    --sage:#7A8B6F;
+    --sage-deep:#5F6F54;
+    --brass:#D4A24C;
+    --line:rgba(43,37,32,0.12);
+    --line-strong:rgba(43,37,32,0.22);
+    --shadow:0 1px 2px rgba(43,37,32,0.06), 0 8px 24px rgba(43,37,32,0.08);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+
+  .wrap{
+    max-width:980px;
+    margin:0 auto;
+    padding:48px 24px 80px;
+  }
+
+  @media (max-width:640px){
+    .wrap{padding:32px 16px 56px;}
+  }
+
+  /* ---------- HEADER ---------- */
+  .eyebrow{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--brick-deep);
+    margin-bottom:14px;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--brick);}
+
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(32px,5vw,52px);
+    line-height:1.04;
+    margin:0 0 10px;
+    letter-spacing:-0.01em;
+  }
+  h1 em{
+    font-style:italic;
+    font-weight:500;
+    color:var(--brick);
+  }
+
+  .sub{
+    font-size:16px;
+    color:var(--ink-soft);
+    max-width:560px;
+    line-height:1.55;
+    margin:0 0 36px;
+  }
+
+  /* ---------- HERO RESULT ---------- */
+  .hero{
+    background:var(--ink);
+    border-radius:18px;
+    padding:36px 32px;
+    color:var(--paper);
+    position:relative;
+    overflow:hidden;
+    margin-bottom:28px;
+  }
+  .hero::before{
+    content:"";
+    position:absolute;
+    top:-60px; right:-60px;
+    width:240px; height:240px;
+    background:radial-gradient(circle, rgba(212,162,76,0.25), transparent 70%);
+  }
+  .hero-label{
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:rgba(251,246,238,0.55);
+    margin-bottom:8px;
+  }
+  .hero-date{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(36px,7vw,64px);
+    line-height:1;
+    letter-spacing:-0.01em;
+    color:var(--paper);
+    margin-bottom:6px;
+    position:relative;
+    z-index:1;
+  }
+  .hero-date .brass{color:var(--brass);}
+  .hero-meta{
+    font-size:14.5px;
+    color:rgba(251,246,238,0.7);
+    display:flex;
+    flex-wrap:wrap;
+    gap:18px;
+    margin-top:14px;
+    position:relative;
+    z-index:1;
+  }
+  .hero-meta span b{color:var(--paper); font-weight:700;}
+
+  /* ---------- ROAD VISUAL ---------- */
+  .road-card{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:28px 28px 24px;
+    margin-bottom:28px;
+  }
+  .road-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:18px;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .road-title{
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .road-pct{
+    font-family:'Fraunces',serif;
+    font-size:22px;
+    font-weight:600;
+    color:var(--brick-deep);
+  }
+  .road-track{
+    position:relative;
+    height:14px;
+    background:rgba(43,37,32,0.08);
+    border-radius:8px;
+    overflow:visible;
+    margin:0 0 4px;
+  }
+  .road-fill{
+    position:absolute;
+    top:0; left:0; height:100%;
+    border-radius:8px;
+    background:linear-gradient(90deg, var(--sage-deep), var(--sage));
+    transition:width 0.5s cubic-bezier(.4,1.4,.4,1);
+  }
+  .road-key{
+    position:absolute;
+    top:50%;
+    transform:translate(-50%,-50%);
+    font-size:22px;
+    transition:left 0.5s cubic-bezier(.4,1.4,.4,1);
+    filter:drop-shadow(0 2px 3px rgba(43,37,32,0.25));
+  }
+  .road-labels{
+    display:flex;
+    justify-content:space-between;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-top:10px;
+  }
+
+  /* ---------- INPUTS ---------- */
+  .panel{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:30px 28px;
+    box-shadow:var(--shadow);
+    margin-bottom:28px;
+  }
+  .panel-title{
+    font-family:'Fraunces',serif;
+    font-size:20px;
+    font-weight:600;
+    margin:0 0 22px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px 24px;
+  }
+  @media (max-width:560px){
+    .grid{grid-template-columns:1fr;}
+  }
+  .field label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin-bottom:8px;
+  }
+  .field .value-row{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:6px;
+  }
+  .field .value-row .val{
+    font-family:'Fraunces',serif;
+    font-size:19px;
+    font-weight:600;
+    color:var(--brick-deep);
+  }
+  input[type="range"]{
+    -webkit-appearance:none;
+    width:100%;
+    height:6px;
+    border-radius:4px;
+    background:var(--line-strong);
+    outline:none;
+    margin:4px 0 2px;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:20px; height:20px;
+    border-radius:50%;
+    background:var(--brick);
+    border:3px solid #fff;
+    box-shadow:0 1px 4px rgba(43,37,32,0.35);
+    cursor:pointer;
+  }
+  input[type="range"]::-moz-range-thumb{
+    width:20px; height:20px;
+    border-radius:50%;
+    background:var(--brick);
+    border:3px solid #fff;
+    box-shadow:0 1px 4px rgba(43,37,32,0.35);
+    cursor:pointer;
+  }
+  .range-bounds{
+    display:flex;
+    justify-content:space-between;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    opacity:0.7;
+  }
+  .text-input-row{
+    display:flex;
+    align-items:center;
+    border:1.5px solid var(--line-strong);
+    border-radius:10px;
+    padding:0 14px;
+    background:var(--paper);
+  }
+  .text-input-row span{
+    color:var(--ink-soft);
+    font-weight:600;
+    font-size:15px;
+  }
+  .text-input-row input[type="text"], .text-input-row input[type="number"]{
+    border:none;
+    background:transparent;
+    outline:none;
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    font-weight:600;
+    color:var(--ink);
+    padding:12px 8px;
+    width:100%;
+  }
+
+  /* ---------- COMPOUNDING MOMENT ---------- */
+  .lever-card{
+    background:linear-gradient(135deg, var(--brick) 0%, var(--brick-deep) 100%);
+    border-radius:18px;
+    padding:30px 28px;
+    color:var(--paper);
+    margin-bottom:28px;
+    position:relative;
+    overflow:hidden;
+  }
+
+  /* ---------- EMAIL CAPTURE ---------- */
+  .email-card{
+    background:var(--ink);
+    border-radius:18px;
+    padding:32px 28px;
+    color:var(--paper);
+    margin-bottom:28px;
+    position:relative;
+    overflow:hidden;
+  }
+  .email-card::before{
+    content:"";
+    position:absolute;
+    top:-50px; left:-50px;
+    width:200px; height:200px;
+    background:radial-gradient(circle, rgba(212,162,76,0.2), transparent 70%);
+  }
+  .email-card-title{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:22px;
+    margin:0 0 8px;
+    position:relative; z-index:1;
+  }
+  .email-card-sub{
+    font-size:14.5px;
+    color:rgba(251,246,238,0.75);
+    margin:0 0 20px;
+    max-width:480px;
+    position:relative; z-index:1;
+    line-height:1.5;
+  }
+  .email-card-form-wrap{
+    position:relative;
+    z-index:1;
+    max-width:440px;
+  }
+  /* Override EmailOctopus widget styling to match brand */
+  .email-card-form-wrap input[type="email"],
+  .email-card-form-wrap input[type="text"]{
+    font-family:'Inter',sans-serif !important;
+    border-radius:10px !important;
+    border:1.5px solid rgba(251,246,238,0.25) !important;
+    background:rgba(251,246,238,0.08) !important;
+    color:var(--paper) !important;
+    padding:13px 16px !important;
+    font-size:15px !important;
+  }
+  .email-card-form-wrap input[type="email"]::placeholder,
+  .email-card-form-wrap input[type="text"]::placeholder{
+    color:rgba(251,246,238,0.5) !important;
+  }
+  .email-card-form-wrap button,
+  .email-card-form-wrap input[type="submit"]{
+    font-family:'Inter',sans-serif !important;
+    background:var(--brass) !important;
+    color:var(--ink) !important;
+    border:none !important;
+    border-radius:10px !important;
+    padding:13px 22px !important;
+    font-weight:700 !important;
+    font-size:15px !important;
+    cursor:pointer !important;
+  }
+  .email-card-form-wrap button:hover,
+  .email-card-form-wrap input[type="submit"]:hover{
+    opacity:0.92;
+  }
+  .lever-card::after{
+    content:"";
+    position:absolute;
+    bottom:-80px; left:-40px;
+    width:220px; height:220px;
+    background:radial-gradient(circle, rgba(255,255,255,0.12), transparent 70%);
+  }
+  .lever-title{
+    font-family:'Fraunces',serif;
+    font-size:20px;
+    font-weight:600;
+    margin:0 0 6px;
+    position:relative; z-index:1;
+  }
+  .lever-sub{
+    font-size:14.5px;
+    color:rgba(251,246,238,0.8);
+    margin:0 0 22px;
+    position:relative; z-index:1;
+    max-width:480px;
+  }
+  .lever-row{
+    position:relative; z-index:1;
+    margin-bottom:18px;
+  }
+  .lever-row label{
+    display:flex;
+    justify-content:space-between;
+    font-size:13.5px;
+    font-weight:600;
+    margin-bottom:8px;
+    color:rgba(251,246,238,0.92);
+  }
+  .lever-row label .val{
+    color:var(--brass);
+    font-family:'Fraunces',serif;
+    font-size:16px;
+  }
+  .lever-card input[type="range"]{
+    background:rgba(251,246,238,0.25);
+  }
+  .lever-card input[type="range"]::-webkit-slider-thumb{
+    background:var(--brass);
+    border:3px solid var(--paper);
+  }
+  .lever-card input[type="range"]::-moz-range-thumb{
+    background:var(--brass);
+    border:3px solid var(--paper);
+  }
+  .impact-banner{
+    position:relative; z-index:1;
+    background:rgba(251,246,238,0.12);
+    border:1px solid rgba(251,246,238,0.25);
+    border-radius:12px;
+    padding:16px 18px;
+    margin-top:8px;
+    font-size:15px;
+    line-height:1.5;
+  }
+  .impact-banner b{color:var(--brass); font-family:'Fraunces',serif; font-weight:600;}
+
+  .buy-btn{
+    display:inline-block;
+    margin-top:16px;
+    background:var(--brass);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    font-weight:700;
+    padding:14px 28px;
+    border-radius:10px;
+    text-decoration:none;
+    position:relative;
+    z-index:1;
+    transition:opacity 0.2s;
+  }
+  .buy-btn:hover{opacity:0.9;}
+
+  /* ---------- CHART ---------- */
+  .chart-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:28px 28px 20px;
+    margin-bottom:28px;
+    box-shadow:var(--shadow);
+  }
+  .chart-title{
+    font-family:'Fraunces',serif;
+    font-size:20px;
+    font-weight:600;
+    margin:0 0 4px;
+  }
+  .chart-sub{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    margin:0 0 18px;
+  }
+  svg{width:100%; height:auto; display:block;}
+  .legend{
+    display:flex;
+    gap:22px;
+    margin-top:14px;
+    flex-wrap:wrap;
+  }
+  .legend-item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+  .legend-swatch{width:12px; height:12px; border-radius:3px;}
+
+  footer{
+    text-align:center;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    opacity:0.6;
+    margin-top:8px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow"><span class="dot"></span>HOUSE DEPOSIT PLANNER</div>
+  <h1>Find your <em>move-in date.</em></h1>
+  <p class="sub">Not a generic savings tracker. Tell it the truth about your numbers, and it'll tell you exactly when you'll have the keys — then show you how small changes pull that date forward.</p>
+
+  <!-- HERO RESULT -->
+  <div class="hero">
+    <div class="hero-label">At your current pace, you'll hit your deposit by</div>
+    <div class="hero-date" id="heroDate">— calculating —</div>
+    <div class="hero-meta">
+      <span>Months to go: <b id="metaMonths">—</b></span>
+      <span>Still needed: <b id="metaRemaining">—</b></span>
+      <span>Interest earned by then: <b id="metaInterest">—</b></span>
+    </div>
+  </div>
+
+  <!-- ROAD VISUAL -->
+  <div class="road-card">
+    <div class="road-top">
+      <div class="road-title">Road to the door</div>
+      <div class="road-pct" id="roadPct">0%</div>
+    </div>
+    <div class="road-track">
+      <div class="road-fill" id="roadFill" style="width:0%"></div>
+      <div class="road-key" id="roadKey" style="left:0%">🔑</div>
+    </div>
+    <div class="road-labels">
+      <span id="roadStart">£0 saved</span>
+      <span id="roadEnd">Goal</span>
+    </div>
+  </div>
+
+  <!-- EMAIL CAPTURE -->
+  <div class="email-card">
+    <h2 class="email-card-title">Want your best shot at hitting that date?</h2>
+    <p class="email-card-sub">Get the full calculator (with the slider that shows how to pull your date forward) plus my best UK deposit-saving tips, straight to your inbox. Free, no spam, unsubscribe anytime.</p>
+    <div class="email-card-form-wrap">
+      <script async src="https://eomail5.com/form/9abc783c-723e-11f1-a489-097c759464d6.js" data-form="9abc783c-723e-11f1-a489-097c759464d6"></script>
+    </div>
+  </div>
+
+  <!-- INPUTS -->
+  <div class="panel">
+    <h2 class="panel-title">Your numbers</h2>
+    <div class="grid">
+      <div class="field">
+        <label for="goalInput">Deposit goal</label>
+        <div class="text-input-row">
+          <span>£</span>
+          <input type="number" id="goalInput" value="30000" min="1000" step="500">
+        </div>
+      </div>
+      <div class="field">
+        <label for="savedInput">Already saved</label>
+        <div class="text-input-row">
+          <span>£</span>
+          <input type="number" id="savedInput" value="4000" min="0" step="100">
+        </div>
+      </div>
+      <div class="field">
+        <label>Monthly contribution
+          <span class="value-row"></span>
+        </label>
+        <div class="value-row"><span></span><span class="val" id="monthlyVal">£400</span></div>
+        <input type="range" id="monthlySlider" min="0" max="2500" step="25" value="400">
+        <div class="range-bounds"><span>£0</span><span>£2,500</span></div>
+      </div>
+      <div class="field">
+        <label>Savings interest rate (APY)</label>
+        <div class="value-row"><span></span><span class="val" id="rateVal">4.0%</span></div>
+        <input type="range" id="rateSlider" min="0" max="8" step="0.1" value="4.0">
+        <div class="range-bounds"><span>0%</span><span>8%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPGRADE CTA -->
+  <div class="lever-card">
+    <h2 class="lever-title">Want to see your date move?</h2>
+    <p class="lever-sub">This free version shows you where you stand today. The full Deposit Countdown tool adds the part that actually changes your plan: drag a single slider and watch your move-in date jump forward in real time, plus a full chart showing exactly how much of your deposit comes from your own savings versus compounding interest.</p>
+    <div class="impact-banner" id="impactBanner">
+      <b>Unlock the full calculator</b> — see how much sooner you could be saying "I'm home."
+    </div>
+    <a href="https://flexo68.gumroad.com/l/house-deposit-calculator" target="_blank" class="buy-btn">Get the full calculator — £12 one-time →</a>
+  </div>
+
+  <footer>Built to help you see the date, not just the number.</footer>
+</div>
+
+<script>
+(function(){
+  const els = {
+    goal: document.getElementById('goalInput'),
+    saved: document.getElementById('savedInput'),
+    monthlySlider: document.getElementById('monthlySlider'),
+    monthlyVal: document.getElementById('monthlyVal'),
+    rateSlider: document.getElementById('rateSlider'),
+    rateVal: document.getElementById('rateVal'),
+    impactBanner: document.getElementById('impactBanner'),
+    heroDate: document.getElementById('heroDate'),
+    metaMonths: document.getElementById('metaMonths'),
+    metaRemaining: document.getElementById('metaRemaining'),
+    metaInterest: document.getElementById('metaInterest'),
+    roadFill: document.getElementById('roadFill'),
+    roadKey: document.getElementById('roadKey'),
+    roadPct: document.getElementById('roadPct'),
+    roadStart: document.getElementById('roadStart'),
+    roadEnd: document.getElementById('roadEnd'),
+  };
+
+  function fmtMoney(n){
+    return '£' + Math.round(n).toLocaleString('en-GB');
+  }
+
+  function monthsToGoal(goal, saved, monthly, annualRatePct){
+    if (saved >= goal) return 0;
+    const r = (annualRatePct/100) / 12; // monthly rate
+    let balance = saved;
+    let months = 0;
+    const maxMonths = 1200; // 100 years safety cap
+    if (monthly <= 0 && r <= 0) return Infinity;
+    while (balance < goal && months < maxMonths) {
+      balance = balance * (1 + r) + monthly;
+      months++;
+    }
+    return months >= maxMonths ? Infinity : months;
+  }
+
+  function totalInterestEarned(saved, monthly, annualRatePct, months){
+    const r = (annualRatePct/100) / 12;
+    let balance = saved;
+    let contributed = saved;
+    let interest = 0;
+    for (let i=0;i<months;i++){
+      const interestThisMonth = balance * r;
+      interest += interestThisMonth;
+      balance = balance + interestThisMonth + monthly;
+      contributed += monthly;
+    }
+    return interest;
+  }
+
+  function addMonths(date, months){
+    const d = new Date(date);
+    d.setMonth(d.getMonth() + months);
+    return d;
+  }
+
+  function fmtDate(d){
+    if (!isFinite(d)) return 'Beyond 100 years — adjust your numbers';
+    return d.toLocaleDateString('en-GB', { month:'long', year:'numeric' });
+  }
+
+  function render(){
+    const goal = Math.max(parseFloat(els.goal.value)||0, 1);
+    const saved = Math.max(parseFloat(els.saved.value)||0, 0);
+    const monthly = parseFloat(els.monthlySlider.value)||0;
+    const rate = parseFloat(els.rateSlider.value)||0;
+
+    els.monthlyVal.textContent = fmtMoney(monthly);
+    els.rateVal.textContent = rate.toFixed(1) + '%';
+
+    const months = monthsToGoal(goal, saved, monthly, rate);
+
+    const today = new Date();
+    const targetDate = isFinite(months) ? addMonths(today, months) : Infinity;
+
+    els.heroDate.innerHTML = isFinite(months)
+      ? fmtDate(targetDate).replace(/(\d{4})/, '<span class="brass">$1</span>')
+      : 'Adjust your numbers — goal not reachable within 100 years';
+
+    els.metaMonths.textContent = isFinite(months) ? months + (months===1?' month':' months') : '—';
+    els.metaRemaining.textContent = fmtMoney(Math.max(goal-saved,0));
+    const interestEarned = isFinite(months) ? totalInterestEarned(saved, monthly, rate, months) : 0;
+    els.metaInterest.textContent = isFinite(months) ? fmtMoney(interestEarned) : '—';
+
+    // road visual
+    const pct = Math.min(100, (saved/goal)*100);
+    els.roadFill.style.width = pct + '%';
+    els.roadKey.style.left = pct + '%';
+    els.roadPct.textContent = Math.round(pct) + '%';
+    els.roadStart.textContent = fmtMoney(saved) + ' saved';
+    els.roadEnd.textContent = 'Goal: ' + fmtMoney(goal);
+  }
+
+  [els.goal, els.saved, els.monthlySlider, els.rateSlider].forEach(el=>{
+    el.addEventListener('input', render);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
